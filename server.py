@@ -49,4 +49,28 @@ def get_stats():
         "CPU_BAR": cpu_bar,
         "CPU_STATUS": "[OK]" if cpu_temp < 75 else "[HOT]",
         "RAM_USED": f"{ram_used}MB",
-        "RAM
+        "RAM_BAR": ram_bar,
+        "RAM_STATUS": "[OK]" if ram_bar < 80 else "[HIGH]",
+        "UPTIME": uptime
+    }
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path != "/":
+            self.send_error(404)
+            return
+
+        with open("index.html") as f:
+            html = f.read()
+
+        stats = get_stats()
+        for key, value in stats.items():
+            html = html.replace(f"{{{{{key}}}}}", str(value))
+
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(html.encode())
+
+print(f"Serving on port {PORT}")
+HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
