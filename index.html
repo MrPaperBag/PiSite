@@ -118,11 +118,14 @@
         <div class="terminal">
             <p>pi@rpi-server:~$ system-status --check</p>
             <p style="color: yellow;">[LOADING SYSTEM CORE...]</p>
-            <p>CPU TEMP: 42°C <span style="float: right;">[OK]</span></p>
-            <div class="stat-bar"><div class="stat-fill" id="cpu-bar" style="width: 45%;"></div></div>
-            <p>RAM USAGE: 1.2GB / 8GB <span style="float: right;">[OK]</span></p>
-            <div class="stat-bar"><div class="stat-fill" id="ram-bar" style="width: 15%;"></div></div>
-            <p>Uptime: 12 days, 4 hours, 12 mins</p>
+            <p>CPU TEMP: {{CPU_TEMP}}°C <span style="float: right;">{{CPU_STATUS}}</span></p>
+            <div class="stat-bar"><div class="stat-fill" style="width: {{CPU_BAR}}%;"></div></div>
+
+            <p>RAM USAGE: {{RAM_USED}} / {{RAM_TOTAL}} <span style="float: right;">{{RAM_STATUS}}</span></p>
+            <div class="stat-bar"><div class="stat-fill" style="width: {{RAM_BAR}}%;"></div></div>
+
+            <p>Uptime: {{UPTIME}}</p>
+
             <p>> _<span class="cursor"></span></p>
         </div>
 
@@ -130,15 +133,5 @@
             ESTABLISHED 2024 | DESIGNED FOR LINUX/ARMV7L
         </footer>
     </div>
-
-    <script>
-        // Fake dynamic loading effect
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('cpu-bar').style.width = '68%';
-                document.getElementById('ram-bar').style.width = '32%';
-            }, 500);
-        };
-    </script>
 </body>
 </html>
