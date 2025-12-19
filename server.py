@@ -1,6 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import subprocess
-import time
 
 PORT = 80
 
@@ -8,6 +7,12 @@ def cmd(command):
     return subprocess.check_output(command, shell=True).decode().strip()
 
 def get_stats():
+    # CPU info
+    cpu_model = cmd("grep 'model name' /proc/cpuinfo | head -1 | cut -d: -f2").strip()
+
+    # SoC / Board
+    soc = cmd("grep 'Hardware' /proc/cpuinfo | cut -d: -f2").strip()
+
     # CPU temperature
     cpu_temp = float(cmd("vcgencmd measure_temp | cut -d= -f2 | cut -d\"'\" -f1"))
     cpu_bar = min(int(cpu_temp), 100)
@@ -22,11 +27,16 @@ def get_stats():
     uptime = cmd("uptime -p").replace("up ", "")
 
     return {
+        # Hardware
+        "CPU_MODEL": cpu_model,
+        "SOC": soc,
+        "RAM_TOTAL": f"{ram_total}MB",
+
+        # Live stats
         "CPU_TEMP": f"{cpu_temp:.1f}",
         "CPU_BAR": cpu_bar,
         "CPU_STATUS": "[OK]" if cpu_temp < 75 else "[HOT]",
         "RAM_USED": f"{ram_used}MB",
-        "RAM_TOTAL": f"{ram_total}MB",
         "RAM_BAR": ram_bar,
         "RAM_STATUS": "[OK]" if ram_bar < 80 else "[HIGH]",
         "UPTIME": uptime
